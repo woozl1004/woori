@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.woozl.base.dao.CodeDetailDAO">
+
+
+<!-- codeDetailDAO -->
+
+	<resultMap type="codeDetailTO" id="codeDetailResult">
+
+	<result property="divisionCodeNo" column="DIVISION_CODE_NO"/>
+	<result property="detailCode" column="DETAIL_CODE"/>
+	<result property="detailCodeName" column="DETAIL_CODE_NAME"/>
+	<result property="codeUseCheck" column="CODE_USE_CHECK"/>
+	<result property="description" column="DESCRIPTION"/>
+
+	</resultMap>
+
+
+	<select id="selectCodeDetailList" resultMap="codeDetailResult">
+
+		SELECT
+		DIVISION_CODE_NO, DETAIL_CODE, DETAIL_CODE_NAME
+		, CODE_USE_CHECK, DESCRIPTION
+		FROM CODE_DETAIL
+
+	</select>
+
+
+	<insert id="insertDetailCode" parameterType="codeDetailTO">
+
+		INSERT INTO CODE_DETAIL
+		VALUES
+		( #{divisionCodeNo}
+		, #{detailCode}
+		, #{detailCodeName}
+		, #{codeUseCheck}
+		, #{description} )
+
+	</insert>
+
+
+	<update id="updateDetailCode" parameterType="codeDetailTO">
+
+		UPDATE CODE_DETAIL SET
+		DIVISION_CODE_NO = #{divisionCodeNo}
+		, DETAIL_CODE_NAME = #{detailCodeName}
+		, CODE_USE_CHECK = #{codeUseCheck}
+		, DESCRIPTION = #{description}
+		WHERE
+		DETAIL_CODE = #{detailCode}
+
+	</update>
+
+
+	<delete id="deleteDetailCode" parameterType="codeDetailTO">
+
+		DELETE FROM CODE_DETAIL
+		WHERE DIVISION_CODE_NO = #{divisionCodeNo}
+		AND DETAIL_CODE = #{detailCode}
+
+	</delete>
+
+	<select id="selectSequence" parameterType="map" resultType="string">
+		SELECT CASE WHEN 
+		<if test="findSeq.equals('SERIAL_SEQ') ">
+		LENGTH(SERIAL_SEQ.NEXTVAL)>3 THEN TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||LPAD(SERIAL_SEQ.CURRVAL,2,0) 
+		ELSE TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||SERIAL_SEQ.CURRVAL 
+		END FROM DUAL
+		</if>
+		<if test="findSeq.equals('DE_SEQ') ">
+		LENGTH(DE_SEQ.NEXTVAL)>3 THEN TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||LPAD(DE_SEQ.CURRVAL,2,0) 
+		ELSE TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||DE_SEQ.CURRVAL 
+		END FROM DUAL
+		</if>
+		<if test="findSeq.equals('CONT_SEQ') ">
+		LENGTH(CONT_SEQ.NEXTVAL)>3 THEN TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||LPAD(CONT_SEQ.CURRVAL,2,0) 
+		ELSE TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||CONT_SEQ.CURRVAL 
+		END FROM DUAL
+		</if>
+		<if test="findSeq.equals('CO_SEQ') ">
+		LENGTH(CO_SEQ.NEXTVAL)>3 THEN TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||LPAD(CO_SEQ.CURRVAL,2,0) 
+		ELSE TO_CHAR(SYSDATE,'YYYYMMDD')||'-'||CO_SEQ.CURRVAL 
+		END FROM DUAL
+		</if>
+	</select>
+
+</mapper>

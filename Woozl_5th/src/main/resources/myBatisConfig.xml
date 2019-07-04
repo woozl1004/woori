@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+  <configuration>
+
+	<settings>
+
+		<setting value="true" name="callSettersOnNulls" />
+
+		<setting value="false" name="cacheEnabled" />
+
+		<setting value="true" name="useGeneratedKeys" />
+
+		<setting value="REUSE" name="defaultExecutorType" />
+
+		<setting value="VARCHAR" name="jdbcTypeForNull" />
+
+		<setting value="true" name="mapUnderscoreToCamelCase" />
+
+
+	</settings>
+
+
+
+
+
+	<typeAliases>
+		
+		
+		<!-- base -->
+		<typeAlias alias="codeTO" type="kr.co.woozl.base.to.CodeTO" />
+		<typeAlias alias="codeDetailTO" type="kr.co.woozl.base.to.CodeDetailTO" />
+		<typeAlias alias="menuTO" type="kr.co.woozl.base.to.MenuTO" />
+		<typeAlias alias="dustStatusTO" type="kr.co.woozl.base.to.DustStatusTO" />
+		
+		<!-- hr.emp -->
+		<typeAlias alias="employeeTO" type="kr.co.woozl.hr.emp.to.EmployeeTO" />
+		
+		<!-- logistics.business -->
+		<typeAlias alias="contractTO" type="kr.co.woozl.logistics.business.to.ContractTO" />
+		<typeAlias alias="contractDetailTO" type="kr.co.woozl.logistics.business.to.ContractDetailTO" />
+        
+        <!-- <typeAlias alias="contractReportTO" type="kr.co.woozl.logistics.business.to.ContractReportTO" /> -->
+		<typeAlias alias="customerTO" type="kr.co.woozl.logistics.business.to.CustomerTO" />
+		<typeAlias alias="deliveryResultTO" type="kr.co.woozl.logistics.business.to.DeliveryResultTO" />
+		<typeAlias alias="estimateTO" type="kr.co.woozl.logistics.business.to.EstimateTO" />
+		<typeAlias alias="estimateDetailTO" type="kr.co.woozl.logistics.business.to.EstimateDetailTO" />
+		
+		<!-- logistics.production -->
+		<typeAlias alias="mpsTO" type="kr.co.woozl.logistics.production.to.MpsTO" />
+		<typeAlias alias="mrpGatheringTO" type="kr.co.woozl.logistics.production.to.MrpGatheringTO" />
+		<typeAlias alias="mrpGatheringTO2" type="kr.co.woozl.logistics.production.to.MrpGatheringTO2" />
+		<typeAlias alias="mrpOpenTempTO" type="kr.co.woozl.logistics.production.to.MrpOpenTempTO" />
+		<typeAlias alias="mrpTO" type="kr.co.woozl.logistics.production.to.MrpTO" />
+		<typeAlias alias="prmTO" type="kr.co.woozl.logistics.production.to.PrmTO" />
+		<typeAlias alias="workInstructionTO" type="kr.co.woozl.logistics.production.to.WorkInstructionTO" />
+		<typeAlias alias="MaterialCheckTempTO" type="kr.co.woozl.logistics.production.to.MaterialCheckTempTO" />
+		
+		<!-- logistics.purchase -->
+		<typeAlias alias="bomDeployTO" type="kr.co.woozl.logistics.purchase.to.BomDeployTO" />
+		<typeAlias alias="bomTO" type="kr.co.woozl.logistics.purchase.to.BomTO" />
+		<typeAlias alias="itemTO" type="kr.co.woozl.logistics.purchase.to.ItemTO" />
+		<typeAlias alias="materialPaymentTO" type="kr.co.woozl.logistics.purchase.to.MaterialPaymentTO" />
+		<typeAlias alias="orderDetailTO" type="kr.co.woozl.logistics.purchase.to.OrderDetailTO" />
+		<typeAlias alias="orderGatheringTO" type="kr.co.woozl.logistics.purchase.to.OrderGatheringTO" />
+		<typeAlias alias="orderInfoTO" type="kr.co.woozl.logistics.purchase.to.OrderInfoTO" />
+		<typeAlias alias="stockTO" type="kr.co.woozl.logistics.purchase.to.StockTO" />
+		<typeAlias alias="warehousingTO" type="kr.co.woozl.logistics.purchase.to.WarehousingTO" />
+		
+		<!-- logistics.base -->
+		<typeAlias alias="companyTO" type="kr.co.woozl.logistics.base.to.CompanyTO" />
+		<typeAlias alias="deptTO" type="kr.co.woozl.logistics.base.to.DeptTO" />
+		<typeAlias alias="positionTO" type="kr.co.woozl.logistics.base.to.PositionTO" />
+		<typeAlias alias="workplaceTO" type="kr.co.woozl.logistics.base.to.WorkplaceTO" />
+
+
+	</typeAliases>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </configuration>

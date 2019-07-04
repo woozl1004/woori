@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.woozl.logistics.purchase.dao.BomDAO">
+
+
+<!-- bomDAO -->
+
+	<resultMap type="bomTO" id="bomResult">
+
+	<result property="no" column="NO"/>
+	<result property="itemCode" column="ITEM_CODE"/>
+	<result property="parentItemCode" column="PARENT_ITEM_CODE"/>
+	<result property="netAmount" column="NET_AMOUNT"/>
+	<result property="description" column="DESCRIPTION"/>
+
+
+	</resultMap>
+
+
+
+	<resultMap type="bomDeployTO" id="bomDeployResult2">
+
+	<result property="itemCode" column="ITEM_CODE"/>
+	<result property="itemName" column="ITEM_NAME"/>
+	<result property="parentItemCode" column="PARENT_ITEM_CODE"/>
+	<result property="parentItemName" column="PARENT_ITEM_NAME"/>
+	<result property="unitOfStock" column="UNIT_OF_STOCK"/>
+	<result property="lossRate" column="LOSS_RATE"/>
+	<result property="leadTime" column="LEAD_TIME"/>
+	<result property="standardUnitPrice" column="STANDARD_UNIT_PRICE"/>
+
+	</resultMap>
+	
+
+
+	<resultMap type="bomDeployTO" id="bomDeployResult">
+
+	<result property="itemCode" column="ITEM_CODE"/>
+	<result property="parentItemCode" column="PARENT_ITEM_CODE"/>
+	<result property="itemName" column="ITEM_NAME"/>
+	<result property="itemClassification" column="ITEM_CLASSIFICATION"/>
+	<result property="leadTime" column="LEAD_TIME"/>
+	<result property="lossRate" column="LOSS_RATE"/>
+	<result property="netAmount" column="NET_AMOUNT"/>
+	<result property="standardUnitPrice" column="STANDARD_UNIT_PRICE"/>
+	<result property="parentItemName" column="PARENT_ITEM_NAME"/>
+
+
+	</resultMap>
+
+
+
+
+
+ 	<select id="selectBomList" resultMap="bomResult">
+
+		SELECT
+		NO, ITEM_CODE, PARENT_ITEM_CODE
+		, NET_AMOUNT, DESCRIPTION
+		FROM BOM
+
+	</select>
+	
+	
+	<insert id="insertBom" parameterType="bomTO">
+
+		INSERT INTO BOM
+		VALUES
+		( #{no}
+		, #{itemCode}
+		, #{parentItemCode}
+		, #{netAmount}
+		, #{description}
+		 )
+
+	</insert>
+
+
+	<update id="updateBom" parameterType="bomTO">
+
+		UPDATE BOM SET
+			NO = #{no}
+			, ITEM_CODE = #{itemCode}
+		    , PARENT_ITEM_CODE = #{parentItemCode}
+		    , NET_AMOUNT = #{netAmount}
+		    , DESCRIPTION = #{description}
+		WHERE
+			ITEM_CODE = #{itemCode}
+
+	</update>
+	
+	<delete id="deleteBom" parameterType="bomTO">
+	
+		DELETE FROM BOM
+		WHERE ITEM_CODE = #{itemCode}
+		
+	</delete>
+	
+
+
+
+	<select id="selectBomDeployList" parameterType="map" resultMap="bomDeployResult">
+
+
+   		SELECT
+			ITEMBOM.ITEM_CODE
+	     	, ITEMBOM.PARENT_ITEM_CODE
+		    , ITEMBOM.ITEM_NAME
+		    , ITEMBOM.ITEM_CLASSIFICATION
+	   		, ITEMBOM.LEAD_TIME
+	    	, ITEMBOM.LOSS_RATE
+	    	, ITEMBOM.NET_AMOUNT
+	    	, ITEMBOM.STANDARD_UNIT_PRICE
+	   	    , EM.ITEM_NAME AS PARENT_ITEM_NAME
+		FROM
+		(
+			SELECT
+				B.ITEM_CODE
+		  	    , B.PARENT_ITEM_CODE
+		   		, I.ITEM_NAME
+		   		, I.LEAD_TIME
+		   		, NVL(I.LOSS_RATE,0) LOSS_RATE
+		   		, B.NET_AMOUNT
+		   		, I.ITEM_CLASSIFICATION
+		   		, I.STANDARD_UNIT_PRICE
+			FROM BOM B , ITEM I
+			WHERE I.ITEM_CODE = B.ITEM_CODE
+			START WITH B.ITEM_CODE = #{itemCode}
+	   		CONNECT BY
+   		
+   		<if test="deployCondition.equals('forward') ">
+   			PRIOR B.ITEM_CODE = B.PARENT_ITEM_CODE
+  			ORDER BY B.NO
+  		) ITEMBOM, ITEM EM
+ 		 WHERE ITEMBOM.PARENT_ITEM_CODE = EM.ITEM_CODE(+)
+		</if>
+
+		<if test="deployCondition.equals('reverse') ">
+			PRIOR B.PARENT_ITEM_CODE = B.ITEM_CODE
+ 			ORDER BY B.NO
+ 		) ITEMBOM, ITEM EM
+  		WHERE ITEMBOM.PARENT_ITEM_CODE = EM.ITEM_CODE(+)
+		</if>
+
+
+
+	</select>
+
+
+
+	<select id="selectBomDeployList2" parameterType="map" resultMap="bomDeployResult2">
+
+		SELECT
+			LEV_BOM.ITEM_CODE AS ITEM_CODE
+	      ,LEV_BOM.ITEM_NAME AS ITEM_NAME
+	      ,LEV_BOM.PARENT_ITEM_CODE AS PARENT_ITEM_CODE
+	      ,IM.ITEM_NAME AS PARENT_ITEM_NAME
+	      ,LEV_BOM.UNIT_OF_STOCK AS UNIT_OF_STOCK
+	      ,LEV_BOM.LOSS_RATE AS LOSS_RATE
+	      ,LEV_BOM.LEAD_TIME AS LEAD_TIME
+	      ,LEV_BOM.STANDARD_UNIT_PRICE AS STANDARD_UNIT_PRICE
+  		FROM(SELECT
+	        B.PARENT_ITEM_CODE AS PARENT_ITEM_CODE
+	        ,LPAD('  ',7*(LEVEL-1)) || B.ITEM_CODE  AS ITEM_CODE
+	        ,I.ITEM_NAME AS ITEM_NAME
+	        ,I.UNIT_OF_STOCK AS UNIT_OF_STOCK
+	        ,NVL(I.LOSS_RATE,0) AS LOSS_RATE
+	        ,I.LEAD_TIME AS LEAD_TIME
+	        ,I.STANDARD_UNIT_PRICE AS STANDARD_UNIT_PRICE
+		  FROM BOM B, ITEM I
+		  WHERE B.ITEM_CODE = I.ITEM_CODE
+		  START WITH B.ITEM_CODE = #{itemCode}
+		  CONNECT BY 
+
+   		<if test="deployCondition.equals('forward') ">
+   		
+	   		PRIOR B.ITEM_CODE = B.PARENT_ITEM_CODE
+	 		 ORDER BY B.NO)LEV_BOM , ITEM IM
+	  		WHERE LEV_BOM.PARENT_ITEM_CODE = IM.ITEM_CODE(+)
+
+		</if>
+
+		<if test="deployCondition.equals('reverse') ">
+		
+			PRIOR B.PARENT_ITEM_CODE  = B.ITEM_CODE
+			ORDER BY B.NO)LEV_BOM , ITEM IM
+			WHERE LEV_BOM.PARENT_ITEM_CODE = IM.ITEM_CODE(+)
+
+		</if>
+
+
+	</select>
+
+
+</mapper>

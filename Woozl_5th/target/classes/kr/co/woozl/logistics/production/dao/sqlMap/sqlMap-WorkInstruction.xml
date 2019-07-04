@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.woozl.logistics.production.dao.WorkInstructionDAO">
+
+	<!-- workInstructionDAO -->
+
+	<resultMap type="workInstructionTO" id="workInstructionResult">
+
+	<result property="workInstructionNo" column="WORK_INSTRUCTION_NO"/>
+	<result property="mrpGatheringNo" column="MRP_GATHERING_NO"/>
+	<result property="itemCode" column="ITEM_CODE"/>
+	<result property="itemName" column="ITEM_NAME"/>
+	<result property="instructionDate" column="INSTRUCTION_DATE"/>
+	<result property="unitOfWorkInstruction" column="UNIT_OF_WORK_INSTRUCTION"/>
+	<result property="workInstructionAmount" column="WORK_INSTRUCTION_AMOUNT"/>
+	<result property="productionStatus" column="PRODUCTION_STATUS"/>
+	<result property="description" column="DESCRIPTION"/>
+	<result property="workInstructionStatus" column="WORK_INSTRUCTION_STATUS"/>
+
+	</resultMap>
+
+
+	<select id="selectWorkInstructionList" parameterType="map" resultMap="workInstructionResult">
+
+		SELECT
+		WORK_INSTRUCTION_NO, MRP_GATHERING_NO, ITEM_CODE
+		, ITEM_NAME, INSTRUCTION_DATE, UNIT_OF_WORK_INSTRUCTION
+		, WORK_INSTRUCTION_AMOUNT, PRODUCTION_STATUS, DESCRIPTION
+		, WORK_INSTRUCTION_STATUS
+		FROM PRODUCTION_WORK_INSTRUCTION
+		
+		<if test="fromDate !='workSelect' and toDate != null">
+	     WHERE INSTRUCTION_DATE BETWEEN #{fromDate} AND #{toDate}
+	    </if>
+	    <if test="fromDate.equals('workSelect')">
+	      WHERE PRODUCTION_STATUS IS NULL OR PRODUCTION_STATUS='N'
+	     </if>	
+
+	</select>
+
+
+
+	<insert id="insertWorkInstruction" parameterType="workInstructionTO">
+
+		INSERT INTO PRODUCTION_WORK_INSTRUCTION
+		VALUES
+		( #{workInstructionNo}
+		, #{mrpGatheringNo}
+		, #{itemCode}
+		, #{itemName}
+		, #{instructionDate}
+		, #{unitOfWorkInstruction}
+		, #{workInstructionAmount}
+		, #{productionStatus}
+		, #{description}
+		, #{workInstructionStatus} )
+
+	</insert>
+
+
+
+	<update id="updateWorkInstruction" parameterType="workInstructionTO">
+
+		UPDATE PRODUCTION_WORK_INSTRUCTION SET
+		ITEM_CODE = #{itemCode}
+		, ITEM_NAME = #{itemName}
+		, INSTRUCTION_DATE = #{instructionDate}
+		, UNIT_OF_WORK_INSTRUCTION = #{unitOfWorkInstruction}
+		, WORK_INSTRUCTION_AMOUNT = #{workInstructionAmount}
+		, PRODUCTION_STATUS = #{productionStatus}
+		, DESCRIPTION = #{description}
+		, WORK_INSTRUCTION_STATUS = #{workInstructionStatus}
+		WHERE
+		WORK_INSTRUCTION_NO = #{workInstructionNo}
+		AND
+		MRP_GATHERING_NO = #{mrpGatheringNo}
+
+	</update>
+
+
+	<delete id="deleteWorkInstruction" parameterType="workInstructionTO">
+
+		DELETE FROM PRODUCTION_WORK_INSTRUCTION
+		WHERE
+		WORK_INSTRUCTION_NO = #{workInstructionNo}
+		AND
+		MRP_GATHERING_NO = #{mrpGatheringNo}
+
+
+	</delete>
+	
+
+	
+	<!--workInstructionOpen-->
+	
+	<resultMap type="MaterialCheckTempTO" id="workInstructionOpenResult">
+		<result property="itemCode" column="ITEM_CODE" />
+		<result property="itemName" column="ITEM_NAME" />
+		<result property="stocktaking" column="STOCKTAKING" />
+		<result property="safetyStocktaking" column="SAFETY_STOCKTAKING" />
+		<result property="stockStatus" column="STOCK_STATUS" />
+		<result property="safetyStockStatus" column="SAFETY_STOCK_STATUS" />
+		<result property="necessaryAmount" column="NECESSARY_AMOUNT" />
+	</resultMap>
+	
+	<parameterMap type="map" id="workInstructionOpenParameter">
+      <parameter property="mrpGatherNum" jdbcType="VARCHAR" javaType="string" mode="IN" />
+      <parameter property="result" jdbcType="CURSOR" javaType="java.sql.ResultSet" mode="OUT" resultMap="workInstructionOpenResult"/>
+      <parameter property="errorCode" jdbcType="NUMERIC" javaType="int" mode="OUT" />
+      <parameter property="errorMsg" jdbcType="VARCHAR" javaType="string" mode="OUT" />
+   </parameterMap>
+   
+   <select id="workInstructionOpen"  statementType="CALLABLE" parameterMap="workInstructionOpenParameter">
+	   <![CDATA[
+	        {call PKG_WORK_INSTRUCTION.P_WORK_INSTRUCTION_OPEN(?,?,?,?)}
+	    ]]>
+   </select>
+   
+   
+   
+   	<select id="selectMaterialCheckTemp" resultMap="workInstructionOpenResult">
+
+		SELECT
+		ITEM_CODE,ITEM_NAME,STOCKTAKING,SAFETY_STOCKTAKING
+		,STOCK_STATUS,SAFETY_STOCK_STATUS,NECESSARY_AMOUNT
+		FROM MATERIAL_CHECK_TEMP
+
+	</select>
+
+</mapper>
